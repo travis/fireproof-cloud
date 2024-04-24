@@ -27,31 +27,35 @@ const createServer = async () => {
       signer: await idPromise,
       email: {
         sendValidation: async ({ to, url }) => {
-          const rsp = await fetch('https://api.postmarkapp.com/email/withTemplate', {
-            method: 'POST',
-            headers: {
-              Accept: 'text/json',
-              'Content-Type': 'text/json',
-              'X-Postmark-Server-Token': POSTMARK_TOKEN,
-            },
-            body: JSON.stringify({
-              From: 'fireproof <noreply@fireproof.storage>',
-              To: to,
-              TemplateAlias: 'welcome',
-              TemplateModel: {
-                product_url: 'https://fireproof.storage',
-                product_name: 'Fireproof Storage',
-                email: to,
-                action_url: url,
+          if (POSTMARK_TOKEN) {
+            const rsp = await fetch('https://api.postmarkapp.com/email/withTemplate', {
+              method: 'POST',
+              headers: {
+                Accept: 'text/json',
+                'Content-Type': 'text/json',
+                'X-Postmark-Server-Token': POSTMARK_TOKEN,
               },
-            }),
-          })
+              body: JSON.stringify({
+                From: 'fireproof <noreply@fireproof.storage>',
+                To: to,
+                TemplateAlias: 'welcome',
+                TemplateModel: {
+                  product_url: 'https://fireproof.storage',
+                  product_name: 'Fireproof Storage',
+                  email: to,
+                  action_url: url,
+                },
+              }),
+            })
 
-          if (!rsp.ok) {
-            throw new Error(
-              `Send email failed with status: ${rsp.status
-              }, body: ${await rsp.text()}`
-            )
+            if (!rsp.ok) {
+              throw new Error(
+                `Send email failed with status: ${rsp.status
+                }, body: ${await rsp.text()}`
+              )
+            }
+          } else {
+            throw new Error("POSTMARK_TOKEN is not defined, can't send email")
           }
         }
       },
