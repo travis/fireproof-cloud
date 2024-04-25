@@ -83,7 +83,7 @@ const createServer = async () => {
 
 const serverPromise = createServer()
 
-export async function POST (request: Request) {
+export async function POST (request: Request): Promise<Response> {
   const server = await serverPromise
   request.headers
   if (request.body) {
@@ -100,7 +100,7 @@ export async function POST (request: Request) {
     // @ts-ignore not totally sure how to fix the "unknown" casting here or check if it's needed
     const outgoing = await Server.execute(incoming, server)
     const response = await encoder.encode(outgoing)
-    return response
+    return response as unknown as Response
   } else {
     throw new Error('no body!')
   }
