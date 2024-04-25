@@ -83,7 +83,7 @@ const createServer = async () => {
 
 const serverPromise = createServer()
 
-export async function POST (request: Request): Promise<Response> {
+export async function POST (request: Request) {
   const server = await serverPromise
   request.headers
   if (request.body) {
